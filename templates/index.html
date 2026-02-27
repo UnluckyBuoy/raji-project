@@ -85,83 +85,67 @@
 </a>
 
 <script>
-function sendAlert() {
+function sendAlert(){
 
-    const btn = document.getElementById("alertBtn");
-    const sound = document.getElementById("alertSound");
-    const overlay = document.getElementById("flashOverlay");
+const btn = document.getElementById("alertBtn");
+const sound = document.getElementById("alertSound");
+const overlay = document.getElementById("flashOverlay");
 
-    btn.disabled = true;
-    btn.innerText = "Getting Location...";
+btn.disabled=true;
+btn.innerText="Getting Location...";
 
-    sound.currentTime = 0;
-    sound.play();
+sound.currentTime=0;
+sound.play();
 
-    if (navigator.vibrate) {
-        navigator.vibrate([500,300,500]);
-    }
+if(navigator.vibrate){
+navigator.vibrate([500,300,500]);
+}
 
-    let isOn = false;
-
-    let flashInterval = setInterval(() => {
-        overlay.style.opacity = isOn ? "0" : "0.8";
-        isOn = !isOn;
-    }, 300);
+let flashInterval=setInterval(()=>{
+overlay.style.opacity=
+overlay.style.opacity=="0.8"?"0":"0.8";
+},300);
 
 
-    if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(
 
-        navigator.geolocation.getCurrentPosition(
+function(position){
 
-        function(position){
+const lat=position.coords.latitude;
+const lon=position.coords.longitude;
 
-            const location =
-                position.coords.latitude + "," +
-                position.coords.longitude;
+const location=lat+","+lon;
 
-            document.getElementById("location").value = location;
+console.log("LOCATION:",location);
 
-            btn.innerText = "Sending Alert...";
+document.getElementById("location").value=location;
 
-            console.log("LOCATION:", location);
+btn.innerText="Sending Alert...";
 
-            document.getElementById("alertForm").submit();
+document.getElementById("alertForm").submit();
 
-        },
+},
 
-        function(error){
+function(error){
 
-            alert("Location failed. Turn ON GPS and try again.");
+alert("Location failed");
 
-            btn.disabled = false;
-            btn.innerText = "🚨 SEND ALERT";
+btn.disabled=false;
+btn.innerText="🚨 SEND ALERT";
 
-            clearInterval(flashInterval);
-            overlay.style.opacity = "0";
+clearInterval(flashInterval);
+overlay.style.opacity="0";
 
-            sound.pause();
+sound.pause();
 
-        },
+},
 
-        {
-            enableHighAccuracy:true,
-            timeout:20000,
-            maximumAge:0
-        });
+{
+enableHighAccuracy:true,
+timeout:20000,
+maximumAge:0
+});
 
-    }
-    else{
-
-        alert("Geolocation not supported");
-
-        btn.disabled=false;
-        btn.innerText="🚨 SEND ALERT";
-
-        clearInterval(flashInterval);
-        overlay.style.opacity="0";
-
-        sound.pause();
-    }
 }
 </script>
 
