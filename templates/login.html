@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - Raji Project</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+}
+
+/* LEFT SIDE */
+.left{
+    flex:1;
+    position:relative;
+    background:linear-gradient(-45deg,#f3f3f3,#e6e6e6,#f8f8f8);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:80px;
+}
+
+/* SHAPES BASE */
+.shape{
+    position:absolute;
+    border-radius:25px;
+    box-shadow:0 20px 30px rgba(0,0,0,0.25);
+    transition:0.3s ease;
+}
+
+/* ORANGE - lowest */
+.orange{
+    width:230px;
+    height:140px;
+    background:#ff7a2f;
+    border-radius:140px 140px 0 0;
+    bottom:40px;
+    left:130px;
+    z-index:1;
+}
+
+/* BLACK - second tallest */
+.black{
+    width:130px;
+    height:220px;
+    background:#111;
+    bottom:80px;
+    left:270px;
+    z-index:2;
+}
+
+/* PURPLE - tallest */
+.purple{
+    width:170px;
+    height:270px;
+    background:linear-gradient(to bottom,#6a00ff,#9d4edd);
+    bottom:110px;
+    left:330px;
+    z-index:3;
+}
+
+/* YELLOW - chubby */
+.yellow{
+    width:190px;
+    height:200px;
+    background:#f9c80e;
+    border-radius:100px;
+    bottom:60px;
+    left:430px;
+    z-index:4;
+}
+
+/* EYES */
+.eye{
+    width:16px;
+    height:16px;
+    background:white;
+    border-radius:50%;
+    position:absolute;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.pupil{
+    width:7px;
+    height:7px;
+    background:black;
+    border-radius:50%;
+    transition:0.2s;
+}
+
+/* CLOSED EYES */
+.eye.closed{
+    background:white;
+}
+.eye.closed .pupil{
+    display:none;
+}
+.eye.closed::after{
+    content:"";
+    width:14px;
+    height:3px;
+    background:#333;
+    border-radius:3px;
+}
+
+/* MOUTHS */
+.mouth{
+    position:absolute;
+}
+
+/* ORANGE - leftmost */
+.orange{
+    width:230px;
+    height:140px;
+    background:#ff7a2f;
+    border-radius:140px 140px 0 0;
+    bottom:40px;
+    left:90px;
+    z-index:1;
+}
+
+/* BLACK - second */
+.black{
+    width:130px;
+    height:220px;
+    background:#111;
+    bottom:80px;
+    left:250px;
+    z-index:2;
+}
+
+/* PURPLE - tallest */
+.purple{
+    width:170px;
+    height:270px;
+    background:linear-gradient(to bottom,#6a00ff,#9d4edd);
+    bottom:110px;
+    left:340px;
+    z-index:3;
+}
+
+/* YELLOW - rightmost */
+.yellow{
+    width:190px;
+    height:200px;
+    background:#f9c80e;
+    border-radius:100px;
+    bottom:60px;
+    left:470px;
+    z-index:4;
+}
+
+/* ERROR reaction */
+.error .mouth{
+    border-bottom:none !important;
+    height:4px !important;
+    background:#111 !important;
+}
+.error .pupil{
+    transform:translateY(3px);
+}
+
+/* DISGUST / WRONG PASSWORD REACTION */
+.disgust .eye {
+    background:white;
+}
+
+.disgust .pupil {
+    transform:translateY(-3px);
+}
+
+.disgust .mouth {
+    border-bottom:none !important;
+    border-top:4px solid #111 !important;
+    height:30px !important;
+    border-radius:30px 30px 0 0 !important;
+    background:transparent !important;
+}
+
+/* White mouth for black shape */
+.black.disgust .mouth{
+    border-top:4px solid white !important;
+}
+
+/* RIGHT SIDE */
+.right{
+    flex:1;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-box{
+    width:80%;
+    max-width:350px;
+}
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:none;
+    border-bottom:1px solid #ccc;
+    outline:none;
+}
+
+.password-wrapper{
+    position:relative;
+}
+
+.toggle{
+    position:absolute;
+    right:0;
+    top:5px;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.flash-msg{
+    background:#ffe5e5;
+    color:red;
+    padding:10px;
+    margin-bottom:15px;
+    border-radius:6px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:black;
+    color:white;
+    border:none;
+    border-radius:25px;
+    cursor:pointer;
+}
+
+@media(max-width:768px){
+    .left{display:none;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="left" id="scene">
+
+<div class="shape orange">
+<div class="eye" style="top:50px;left:95px;"><div class="pupil"></div></div>
+<div class="eye" style="top:50px;left:125px;"><div class="pupil"></div></div>
+<div class="mouth"></div>
+</div>
+
+<div class="shape black">
+<div class="eye" style="top:70px;left:40px;"><div class="pupil"></div></div>
+<div class="eye" style="top:70px;left:75px;"><div class="pupil"></div></div>
+<div class="mouth"></div>
+</div>
+
+<div class="shape purple">
+<div class="eye" style="top:70px;left:55px;"><div class="pupil"></div></div>
+<div class="eye" style="top:70px;left:95px;"><div class="pupil"></div></div>
+<div class="mouth"></div>
+</div>
+
+<div class="shape yellow">
+<div class="eye" style="top:65px;left:65px;"><div class="pupil"></div></div>
+<div class="eye" style="top:65px;left:105px;"><div class="pupil"></div></div>
+<div class="mouth"></div>
+</div>
+
+</div>
+
+<div class="right">
+<div class="login-box">
+
+<h2>Welcome back!</h2>
+<p>Please enter your details</p>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="flash-msg">{{ messages[0] }}</div>
+<script>
+document.querySelectorAll(".shape").forEach(shape=>{
+    shape.classList.add("disgust");
+});
+</script>
+{% endif %}
+{% endwith %}
+
+<form id="loginForm">
+<input type="text" name="username" placeholder="Username" required>
+
+<div class="password-wrapper">
+<input type="password" id="password" name="password" placeholder="Password" required>
+<span class="toggle" id="toggle">🙈</span>
+</div>
+
+<button type="submit">Log In</button>
+</form>
+
+</div>
+</div>
+
+<script>
+const pupils=document.querySelectorAll(".pupil");
+const eyes=document.querySelectorAll(".eye");
+const password=document.getElementById("password");
+const toggle=document.getElementById("toggle");
+
+/* Eye tracking */
+document.addEventListener("mousemove",(e)=>{
+pupils.forEach(pupil=>{
+const eye=pupil.parentElement;
+const rect=eye.getBoundingClientRect();
+const dx=e.clientX-(rect.left+rect.width/2);
+const dy=e.clientY-(rect.top+rect.height/2);
+const angle=Math.atan2(dy,dx);
+const radius=4;
+pupil.style.transform=
+`translate(${Math.cos(angle)*radius}px,${Math.sin(angle)*radius}px)`;
+});
+});
+
+/* Close eyes while typing */
+password.addEventListener("focus",()=>{
+eyes.forEach(e=>e.classList.add("closed"));
+});
+password.addEventListener("blur",()=>{
+eyes.forEach(e=>e.classList.remove("closed"));
+});
+
+/* Toggle password */
+toggle.addEventListener("click",()=>{
+if(password.type==="password"){
+password.type="text";
+toggle.textContent="👀";
+pupils.forEach(p=>p.style.transform="translate(-4px,0)");
+}else{
+password.type="password";
+toggle.textContent="🙈";
+pupils.forEach(p=>p.style.transform="translate(0,0)");
+}
+});
+</script>
+
+<script>
+const form = document.getElementById("loginForm");
+const shapes = document.querySelectorAll(".shape");
+
+form.addEventListener("submit", async function(e){
+    e.preventDefault();  // stop page reload
+
+    const formData = new FormData(form);
+
+    const response = await fetch("/login", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    if(data.status === "error"){
+
+        shapes.forEach(s => s.classList.add("disgust"));
+
+        setTimeout(()=>{
+            shapes.forEach(s => s.classList.remove("disgust"));
+        }, 1500);
+
+    }
+
+    if(data.status === "success"){
+        window.location.href = data.redirect;
+    }
+});
+</script>
+
+</body>
+</html>

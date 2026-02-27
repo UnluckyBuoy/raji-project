@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - Raji Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            background:#121212;
+            color:white;
+            font-family:Arial;
+            padding:30px;
+            margin:0;
+        }
+
+        table {
+            margin-top:30px;
+            border-collapse:collapse;
+            width:100%;
+        }
+
+        th, td {
+            border:1px solid #333;
+            padding:8px;
+            font-size:14px;
+            text-align:center;
+        }
+
+        th {
+            background:#1e1e1e;
+        }
+
+        @media (max-width:600px) {
+            th, td {
+                font-size:12px;
+                padding:6px;
+            }
+        }
+
+        .card {
+            background:#1e1e1e;
+            padding:20px;
+            border-radius:10px;
+            flex:1;
+        }
+
+        .stats {
+            display:flex;
+            gap:20px;
+            flex-wrap:wrap;
+            margin-bottom:30px;
+        }
+
+        .flash-msg {
+            background:#2e7d32;
+            padding:10px;
+            margin-bottom:15px;
+            border-radius:6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>📊 Admin Dashboard</h2>
+<a href="/logout" style="color:#ff5252;">Logout</a>
+
+<hr>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash-msg">
+        {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Stats -->
+<div class="stats">
+
+    <div class="card">
+        <h4>Total Alerts</h4>
+        <p style="font-size:22px;">{{ total_alerts }}</p>
+    </div>
+
+    <div class="card">
+        <h4>Today's Alerts</h4>
+        <p style="font-size:22px;">{{ today_alerts }}</p>
+    </div>
+
+    <div class="card">
+        <h4>Last Alert Time</h4>
+        <p>{{ last_alert_time }}</p>
+    </div>
+
+</div>
+
+<!-- Chart -->
+<canvas id="alertChart" height="100"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartData = {{ chart_data | tojson }};
+
+    if (chartData.length > 0) {
+        const labels = chartData.map(item => item[0]);
+        const counts = chartData.map(item => item[1]);
+
+        new Chart(document.getElementById('alertChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Alerts Per Day',
+                    data: counts,
+                    borderColor: '#ff5252',
+                    fill: false,
+                    tension: 0.3
+                }]
+            }
+        });
+    }
+</script>
+
+<!-- Alerts Table -->
+<div style="overflow-x:auto;">
+<table>
+
+    <tr>
+        <th>ID</th>
+        <th>Time</th>
+        <th>Location</th>
+        <th>Map</th>
+        <th>Action</th>
+    </tr>
+
+    {% for alert in alerts %}
+    <tr>
+        <td>{{ alert[0] }}</td>
+        <td>{{ alert[1] }}</td>
+        <td>{{ alert[2] }}</td>
+        <td>
+            <a href="{{ alert[3] }}" target="_blank" style="color:#4caf50;">
+                View Map
+            </a>
+        </td>
+        <td>
+            <a href="/delete/{{ alert[0] }}"
+               style="color:#ff5252;"
+               onclick="return confirm('Delete this alert?')">
+               Delete
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+</div>
+
+</body>
+</html>

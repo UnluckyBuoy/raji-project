@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Contacts - Raji Project</title>
+
+    <style>
+        body {
+            margin:0;
+            background:#121212;
+            color:white;
+            font-family:Arial;
+            padding:30px;
+            text-align:center;
+        }
+
+        .container {
+            max-width:600px;
+            margin:auto;
+        }
+
+        input {
+            padding:10px;
+            margin:5px;
+            width:90%;
+            max-width:250px;
+            border:none;
+            border-radius:5px;
+        }
+
+        button {
+            padding:10px 20px;
+            background:#e53935;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        button:hover {
+            background:#c62828;
+        }
+
+        .contact-card {
+            background:#1e1e1e;
+            padding:10px;
+            margin-top:10px;
+            border-radius:6px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .delete-btn {
+            color:#ff5252;
+            text-decoration:none;
+        }
+
+        .flash-msg {
+            background:#2e7d32;
+            padding:8px;
+            border-radius:6px;
+            margin-bottom:15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📞 Emergency Contacts</h1>
+
+<a href="/admin" style="color:#4caf50;">← Back to Dashboard</a>
+
+<br><br>
+
+<!-- Flash Message -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash-msg">
+        {{ messages[0] }}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
+    <input type="text" name="name" placeholder="Contact Name" required>
+    <input type="text" name="phone" placeholder="+91XXXXXXXXXX" required>
+    <br>
+    <button type="submit">Add Contact</button>
+</form>
+
+<h3 style="margin-top:30px;">Saved Contacts</h3>
+
+{% if contacts %}
+    {% for contact in contacts %}
+        <div class="contact-card">
+            <span>{{ contact[1] }} - {{ contact[2] }}</span>
+            <a href="/delete_contact/{{ contact[0] }}"
+               class="delete-btn"
+               onclick="return confirm('Delete this contact?')">
+               Delete
+            </a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p style="color:#bbb;">No contacts added yet.</p>
+{% endif %}
+
+</div>
+
+</body>
+</html>

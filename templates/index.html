@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Women Safety - Raji Project</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: linear-gradient(135deg,#1f1f1f,#000000);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        h1 { color: red; }
+
+        button {
+            margin-top: 40px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            font-size: 20px;
+            background: #e53935;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+        }
+
+        #flashOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: red;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🚨 WOMEN SAFETY ALERT 🚨</h1>
+
+<p>Instantly send your live location to emergency contacts.</p>
+
+{% if last_alert %}
+<p style="color:#bbb;">
+    Last Alert Sent: {{ last_alert[0] }}
+</p>
+{% endif %}
+
+<div id="flashOverlay"></div>
+
+<audio id="alertSound">
+    <source src="{{ url_for('static', filename='siren.mp3') }}" type="audio/mpeg">
+</audio>
+
+<form id="alertForm" method="POST" action="/alert">
+    <input type="hidden" name="location" id="location">
+
+    <button type="button" id="alertBtn" onclick="sendAlert()">
+        🚨 SEND ALERT
+    </button>
+</form>
+
+<br><br>
+
+<a href="tel:181"
+   style="padding:15px 40px;
+          background:#1976d2;
+          border-radius:10px;
+          color:white;
+          text-decoration:none;">
+   📞 Call Women Helpline (181)
+</a>
+
+<script>
+function sendAlert() {
+
+    const btn = document.getElementById("alertBtn");
+    const sound = document.getElementById("alertSound");
+    const overlay = document.getElementById("flashOverlay");
+
+    btn.disabled = true;
+    btn.innerText = "Getting Location...";
+
+    // Play siren
+    sound.currentTime = 0;
+    sound.play();
+
+    // Vibration
+    if (navigator.vibrate) {
+        navigator.vibrate([500,300,500,300,500]);
+    }
+
+    // Flash effect
+    let isOn = false;
+    let flashInterval = setInterval(() => {
+        overlay.style.opacity = isOn ? "0" : "0.8";
+        isOn = !isOn;
+    }, 300);
+
+
+    if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition(
+
+        function(position){
+
+            const location =
+                position.coords.latitude + "," +
+                position.coords.longitude;
+
+            document.getElementById("location").value = location;
+
+            btn.innerText = "Sending Alert...";
+
+            document.getElementById("alertForm").submit();
+
+        },
+
+        function(error){
+
+            alert("GPS blocked or unavailable. Enable Location.");
+
+            btn.disabled = false;
+            btn.innerText = "🚨 SEND ALERT";
+
+            clearInterval(flashInterval);
+            overlay.style.opacity = "0";
+
+        },
+
+        {
+            enableHighAccuracy:true,
+            timeout:15000,
+            maximumAge:0
+        });
+
+    }
+    else{
+
+        alert("Geolocation not supported");
+
+        btn.disabled=false;
+        btn.innerText="🚨 SEND ALERT";
+
+        clearInterval(flashInterval);
+        overlay.style.opacity="0";
+
+    }
+}
+</script>
+
+</body>
+</html>
