@@ -94,17 +94,15 @@ function sendAlert() {
     btn.disabled = true;
     btn.innerText = "Getting Location...";
 
-    // Play siren
     sound.currentTime = 0;
     sound.play();
 
-    // Vibration
     if (navigator.vibrate) {
-        navigator.vibrate([500,300,500,300,500]);
+        navigator.vibrate([500,300,500]);
     }
 
-    // Flash effect
     let isOn = false;
+
     let flashInterval = setInterval(() => {
         overlay.style.opacity = isOn ? "0" : "0.8";
         isOn = !isOn;
@@ -125,13 +123,15 @@ function sendAlert() {
 
             btn.innerText = "Sending Alert...";
 
+            console.log("LOCATION:", location);
+
             document.getElementById("alertForm").submit();
 
         },
 
         function(error){
 
-            alert("GPS blocked or unavailable. Enable Location.");
+            alert("Location failed. Turn ON GPS and try again.");
 
             btn.disabled = false;
             btn.innerText = "🚨 SEND ALERT";
@@ -139,11 +139,13 @@ function sendAlert() {
             clearInterval(flashInterval);
             overlay.style.opacity = "0";
 
+            sound.pause();
+
         },
 
         {
             enableHighAccuracy:true,
-            timeout:15000,
+            timeout:20000,
             maximumAge:0
         });
 
@@ -158,6 +160,7 @@ function sendAlert() {
         clearInterval(flashInterval);
         overlay.style.opacity="0";
 
+        sound.pause();
     }
 }
 </script>
